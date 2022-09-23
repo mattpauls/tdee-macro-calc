@@ -32,3 +32,28 @@
             # Output: how many grams of carbs you should eat (and as an FYI, how many calories that is)
 
 
+# Get current stats
+current_weight = input("Your current weight (lbs): ")
+current_tdee = input("Your current TDEE: ")
+
+# Calculate calorie deficit
+target_calorie_deficit = 3.2 * float(current_weight)
+target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
+
+# Calculate Macros
+protein_grams = .8 * float(current_weight)
+fat_grams = .3 * float(current_weight)
+carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
+
+# Output info to user
+print("\n")
+print("====== CALORIES ======")
+print("Target calorie intake:", str(target_calorie_intake))
+print("Target calorie deficit:", str(target_calorie_deficit))
+print("\n")
+print("====== MACROS ======")
+print("Target protein intake (grams):", str(protein_grams))
+print("Target fat intake (grams):", str(fat_grams))
+print("Target carbs intake (grams):", str(carbs_grams))
+
+
