@@ -5,6 +5,7 @@
     # Input should include date, weight, and calories
     # To make it easy, it might be helpful to default to the next day for the date, since this is a command line program, currently
     # All this data needs to be stored somewhere, likely a dictionary in memory to start but would be helpful to have a database or, possibly, a CSV file if we want to be more hacky
+        # Actually JSON makes more sense I think.
 
 # Run calculations
     # Once the input is done, we can take all the input and get an average of calories
@@ -32,28 +33,30 @@
             # Output: how many grams of carbs you should eat (and as an FYI, how many calories that is)
 
 
-# Get current stats
-current_weight = input("Your current weight (lbs): ")
-current_tdee = input("Your current TDEE: ")
+def main():
+    # Get current stats
+    current_weight = input("Your current weight (lbs): ")
+    current_tdee = input("Your current TDEE: ")
 
-# Calculate calorie deficit
-target_calorie_deficit = 3.2 * float(current_weight)
-target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
+    # Calculate calorie deficit
+    target_calorie_deficit = 3.2 * float(current_weight)
+    target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
 
-# Calculate Macros
-protein_grams = .8 * float(current_weight)
-fat_grams = .3 * float(current_weight)
-carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
+    # Calculate Macros
+    protein_grams = .8 * float(current_weight)
+    fat_grams = .3 * float(current_weight)
+    carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
 
-# Output info to user
-print("\n")
-print("====== CALORIES ======")
-print("Target calorie intake:", str(target_calorie_intake))
-print("Target calorie deficit:", str(target_calorie_deficit))
-print("\n")
-print("====== MACROS ======")
-print("Target protein intake (grams):", str(protein_grams))
-print("Target fat intake (grams):", str(fat_grams))
-print("Target carbs intake (grams):", str(carbs_grams))
+    # Output info to user
+    print("\n")
+    print("====== CALORIES ======")
+    print("Target calorie intake:", str(target_calorie_intake))
+    print("Target calorie deficit:", str(target_calorie_deficit))
+    print("\n")
+    print("====== MACROS ======")
+    print("Target protein intake (grams):", str(protein_grams))
+    print("Target fat intake (grams):", str(fat_grams))
+    print("Target carbs intake (grams):", str(carbs_grams))
 
-
+if __name__ == "__main__":
+    main()
