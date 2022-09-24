@@ -32,11 +32,40 @@
         # Carbs 4 cal per gram Essentially, take the calories eaten in protein and fat, subtract from your goal calories per day, and the rest is what you can eat in carbs. However, carbs/fat really doesn't matter, what is most important is protein.
             # Output: how many grams of carbs you should eat (and as an FYI, how many calories that is)
 
+# JSON Data structure DRAFT
+data = {
+    "user": {
+        "current_weight": 176, # this will be updated with a rolling 7-day average
+        "current_tdee": 2400, # this will be updated with a max 4 week (?) average
+        "sex": "male", # this determines default of 3.2, if female can go to 4.5 I believe. Not sure if I want to actually include this as functionality right now or not
+        "target_calorie_intake": 1700,
+        "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
+        "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
+        "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
+    },
+    "tdee": [
+        {
+            "date": "9/20/22",
+            "weight": 178.1,
+            "calories": 2531
+        },
+        {
+            "date": "9/21/22",
+            "weight": 177.3,
+            "calories": 1971
+        },
+        {
+            "date": "9/22/22",
+            "weight": 179.2,
+            "calories": 2391
+        }
+    ]
+}
 
 def main():
     # Get current stats
     current_weight = input("Your current weight (lbs): ")
-    current_tdee = input("Your current TDEE: ")
+    current_tdee = input("Your current TDEE (calories): ")
 
     # Calculate calorie deficit
     target_calorie_deficit = 3.2 * float(current_weight)
