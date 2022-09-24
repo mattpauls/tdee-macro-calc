@@ -43,9 +43,9 @@ data = {
         "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
         "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
     },
-    "tdee": [
+    "tdee": [ # TODO This could totally be an object, same with user
         {
-            "date": "9/20/22",
+            "date": "9/20/22", # TODO this should be a datetime object and need to handle type checking
             "weight": 178.1,
             "calories": 2531
         },
@@ -65,12 +65,18 @@ data = {
 def tdee_input():
     while True:
         print("Add TDEE record. Enter 'e' to exit.")
+        
+        # Prompt user for date of entry
         date = input("Date: ")
         if date == "e":
             break
+        
+        # Prompt user for weight
         weight = input("Weight: ")
         if weight == "e":
             break
+
+        # Prompt user for calories consumed
         calories = input("Calories: ")
         if calories == "e":
             break
@@ -81,12 +87,8 @@ def tdee_input():
             "weight": float(weight),
             "calories": int(calories)
         })
-    print(data["tdee"])
 
-    # Prompt user for date of entry
-    # Prompt user for weight
-    # Prompt user for calories consumed
-    # Repeat until user exits
+    print(data["tdee"])
 
 def main():
     # Get current stats
