@@ -32,6 +32,8 @@
         # Carbs 4 cal per gram Essentially, take the calories eaten in protein and fat, subtract from your goal calories per day, and the rest is what you can eat in carbs. However, carbs/fat really doesn't matter, what is most important is protein.
             # Output: how many grams of carbs you should eat (and as an FYI, how many calories that is)
 
+import json
+
 # JSON Data structure DRAFT
 data = {
     "user": {
@@ -61,6 +63,14 @@ data = {
         }
     ]
 }
+
+def add_to_file():
+    try:
+        with open("data.json") as f:
+            new_data = json.load(f)
+            print(new_data)
+    except:
+        print("error opening file")
 
 def tdee_input():
     while True:
