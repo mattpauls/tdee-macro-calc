@@ -64,8 +64,11 @@ data = {
 
 def main():
     # Get current stats
-    current_weight = input("Your current weight (lbs): ")
-    current_tdee = input("Your current TDEE (calories): ")
+    # current_weight = input("Your current weight (lbs): ")
+    current_weight = data["user"]["current_weight"]
+    # current_tdee = input("Your current TDEE (calories): ")
+    current_tdee = data["user"]["current_tdee"]
+
 
     # Calculate calorie deficit
     target_calorie_deficit = 3.2 * float(current_weight)
@@ -77,6 +80,10 @@ def main():
     carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
 
     # Output info to user
+    print("\n")
+    print("====== STATS ======")
+    print("Your current weight:", str(current_weight))
+    print("Your current TDEE:", str(current_tdee))
     print("\n")
     print("====== CALORIES ======")
     print("Target calorie intake:", str(target_calorie_intake))
