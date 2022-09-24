@@ -62,13 +62,38 @@ data = {
     ]
 }
 
+def tdee_input():
+    while True:
+        print("Add TDEE record. Enter 'e' to exit.")
+        date = input("Date: ")
+        if date == "e":
+            break
+        weight = input("Weight: ")
+        if weight == "e":
+            break
+        calories = input("Calories: ")
+        if calories == "e":
+            break
+
+        # Append to data
+        data["tdee"].append({
+            "date": date,
+            "weight": float(weight),
+            "calories": int(calories)
+        })
+    print(data["tdee"])
+
+    # Prompt user for date of entry
+    # Prompt user for weight
+    # Prompt user for calories consumed
+    # Repeat until user exits
+
 def main():
     # Get current stats
     # current_weight = input("Your current weight (lbs): ")
     current_weight = data["user"]["current_weight"]
     # current_tdee = input("Your current TDEE (calories): ")
     current_tdee = data["user"]["current_tdee"]
-
 
     # Calculate calorie deficit
     target_calorie_deficit = 3.2 * float(current_weight)
@@ -95,4 +120,5 @@ def main():
     print("Target carbs intake (grams):", str(carbs_grams))
 
 if __name__ == "__main__":
-    main()
+    # main()
+    tdee_input()
