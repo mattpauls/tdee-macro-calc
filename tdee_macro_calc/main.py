@@ -1,3 +1,5 @@
+import rich
+from rich.console import Console
 
 # TDEE Calculation
 # Gather input from user
@@ -75,12 +77,12 @@ def add_to_file():
 def tdee_input():
     while True:
         print("Add TDEE record. Enter 'e' to exit.")
-        
+
         # Prompt user for date of entry
-        date = input("Date: ")
+        date = rich.console.input("Date: ")
         if date == "e":
             break
-        
+
         # Prompt user for weight
         weight = input("Weight: ")
         if weight == "e":
@@ -101,6 +103,8 @@ def tdee_input():
     print(data["tdee"])
 
 def main():
+    c = Console()
+
     # Get current stats
     # current_weight = input("Your current weight (lbs): ")
     current_weight = data["user"]["current_weight"]
@@ -117,19 +121,16 @@ def main():
     carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
 
     # Output info to user
-    print("\n")
-    print("====== STATS ======")
-    print("Your current weight:", str(current_weight))
-    print("Your current TDEE:", str(current_tdee))
-    print("\n")
-    print("====== CALORIES ======")
-    print("Target calorie intake:", str(target_calorie_intake))
-    print("Target calorie deficit:", str(target_calorie_deficit))
-    print("\n")
-    print("====== MACROS ======")
-    print("Target protein intake (grams):", str(protein_grams))
-    print("Target fat intake (grams):", str(fat_grams))
-    print("Target carbs intake (grams):", str(carbs_grams))
+    c.rule(title="Statistics")
+    c.print("Your current weight:", str(current_weight))
+    c.print("Your current TDEE:", str(current_tdee))
+    c.rule(title="Calories")
+    c.print("Target calorie intake:", str(target_calorie_intake))
+    c.print("Target calorie deficit:", str(target_calorie_deficit))
+    c.rule("Macros")
+    c.print("Target protein intake (grams):", str(protein_grams))
+    c.print("Target fat intake (grams):", str(fat_grams))
+    c.print("Target carbs intake (grams):", str(carbs_grams))
 
 if __name__ == "__main__":
     # main()

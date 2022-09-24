@@ -23,13 +23,19 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "rich"
+]
 dynamic = ["version"]
 
 [project.urls]
 Documentation = "https://github.com/mattpauls/tdee-macro-calc#readme"
 Issues = "https://github.com/mattpauls/tdee-macro-calc/issues"
 Source = "https://github.com/mattpauls/tdee-macro-calc"
+
+
+[project.scripts]
+tdee = "tdee_macro_calc.main:main"
 
 [tool.hatch.version]
 path = "tdee_macro_calc/__about__.py"

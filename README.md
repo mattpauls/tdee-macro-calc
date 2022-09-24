@@ -10,6 +10,27 @@ TDEE is the running average of daily calories. To lose weight, IN GENERAL, one m
 
 Once the current TDEE is calculated, a goal TDEE can be obtained by determining how much and how quickly weight should be lost. This goal TDEE is the number of calories one should eat in a day to achieve a relative calorie deficit and begin to lose weight.
 
+## Installation
+
+Clone this repository:
+```
+git clone https://github.com/mattpauls/tdee-macro-calc
+```
+
+Install using `pip`. If you're developing on this project, use the "dev" install (by adding a `-e`):
+```
+pip install -e .
+```
+This will pick up any changes you make after the installation without requiring you to install again.
+
+## Basic Usage
+
+TDEE Macro Calculator is a command line tool with a single entry-point. After installing, you can run the program from anywhere in your terminal by calling:
+```
+tdee
+```
+
+
 ## Macros
 TODO
 
