@@ -1,3 +1,4 @@
+import json
 from rich.console import Console
 from rich.prompt import Prompt
 
@@ -35,8 +36,6 @@ c = Console()
             # Output: how many grams of fat you should eat (and as an FYI, how many calories that is)
         # Carbs 4 cal per gram Essentially, take the calories eaten in protein and fat, subtract from your goal calories per day, and the rest is what you can eat in carbs. However, carbs/fat really doesn't matter, what is most important is protein.
             # Output: how many grams of carbs you should eat (and as an FYI, how many calories that is)
-
-import json
 
 # JSON Data structure DRAFT
 data = {
