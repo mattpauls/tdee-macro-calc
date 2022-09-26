@@ -1,4 +1,5 @@
 import json
+import os
 from rich.console import Console
 from rich.prompt import Prompt
 
@@ -67,6 +68,26 @@ data = {
     ]
 }
 
+def check_data_file() -> dict:
+    try:
+        with open("data.json") as f:
+            new_data = json.load(f)
+            print(new_data)
+
+    except FileNotFoundError:
+        with open("data.json", "x") as f:
+            new_data = {
+                        "user": {
+                            "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
+                            "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
+                            "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
+                        },
+                        "tdee": []
+                    }
+            f.write(json.dumps(new_data))
+
+    return new_data
+
 def add_to_file():
     try:
         with open("data.json") as f:
@@ -105,32 +126,40 @@ def tdee_input():
 
 def main():
 
+    data = check_data_file()
+
     # Get current stats
     # current_weight = input("Your current weight (lbs): ")
-    current_weight = data["user"]["current_weight"]
+    
     # current_tdee = input("Your current TDEE (calories): ")
-    current_tdee = data["user"]["current_tdee"]
+    try:
+        current_weight = data["user"]["current_weight"]
+        current_tdee = data["user"]["current_tdee"]
 
-    # Calculate calorie deficit
-    target_calorie_deficit = 3.2 * float(current_weight)
-    target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
+        # Calculate calorie deficit
+        target_calorie_deficit = 3.2 * float(current_weight)
+        target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
 
-    # Calculate Macros
-    protein_grams = .8 * float(current_weight)
-    fat_grams = .3 * float(current_weight)
-    carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
+        # Calculate Macros
+        protein_grams = .8 * float(current_weight)
+        fat_grams = .3 * float(current_weight)
+        carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
 
-    # Output info to user
-    c.rule(title="Statistics")
-    c.print("Your current weight:", str(current_weight))
-    c.print("Your current TDEE:", str(current_tdee))
-    c.rule(title="Calories")
-    c.print("Target calorie intake:", str(target_calorie_intake))
-    c.print("Target calorie deficit:", str(target_calorie_deficit))
-    c.rule(title="Macros")
-    c.print("Target protein intake (grams):", str(protein_grams))
-    c.print("Target fat intake (grams):", str(fat_grams))
-    c.print("Target carbs intake (grams):", str(carbs_grams))
+        # Output info to user
+        c.rule(title="Statistics")
+        c.print("Your current weight:", str(current_weight))
+        c.print("Your current TDEE:", str(current_tdee))
+        c.rule(title="Calories")
+        c.print("Target calorie intake:", str(target_calorie_intake))
+        c.print("Target calorie deficit:", str(target_calorie_deficit))
+        c.rule(title="Macros")
+        c.print("Target protein intake (grams):", str(protein_grams))
+        c.print("Target fat intake (grams):", str(fat_grams))
+        c.print("Target carbs intake (grams):", str(carbs_grams))
+    except:
+        print("No current weight or tdee data")
+
+    
 
 if __name__ == "__main__":
     main()
