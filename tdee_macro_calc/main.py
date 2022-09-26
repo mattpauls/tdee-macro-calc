@@ -1,5 +1,7 @@
-import rich
 from rich.console import Console
+from rich.prompt import Prompt
+
+c = Console()
 
 # TDEE Calculation
 # Gather input from user
@@ -79,17 +81,17 @@ def tdee_input():
         print("Add TDEE record. Enter 'e' to exit.")
 
         # Prompt user for date of entry
-        date = rich.console.input("Date: ")
+        date = Prompt.ask("Date")
         if date == "e":
             break
 
         # Prompt user for weight
-        weight = input("Weight: ")
+        weight = Prompt.ask("Weight: ")
         if weight == "e":
             break
 
         # Prompt user for calories consumed
-        calories = input("Calories: ")
+        calories = Prompt.ask("Calories: ")
         if calories == "e":
             break
 
@@ -103,7 +105,6 @@ def tdee_input():
     print(data["tdee"])
 
 def main():
-    c = Console()
 
     # Get current stats
     # current_weight = input("Your current weight (lbs): ")
@@ -127,11 +128,11 @@ def main():
     c.rule(title="Calories")
     c.print("Target calorie intake:", str(target_calorie_intake))
     c.print("Target calorie deficit:", str(target_calorie_deficit))
-    c.rule("Macros")
+    c.rule(title="Macros")
     c.print("Target protein intake (grams):", str(protein_grams))
     c.print("Target fat intake (grams):", str(fat_grams))
     c.print("Target carbs intake (grams):", str(carbs_grams))
 
 if __name__ == "__main__":
-    # main()
-    tdee_input()
+    main()
+    # tdee_input()
