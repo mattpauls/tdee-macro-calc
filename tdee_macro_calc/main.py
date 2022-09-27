@@ -1,11 +1,15 @@
 import json
-import os
 from rich.console import Console
 from rich.prompt import Prompt
 
 c = Console()
 
 def check_data_file() -> dict:
+    """
+    Checks to see if the file data.json exists, and if not it creates it with default values.
+
+    Returns a dictionary of the user and tdee information in the file.
+    """
     try:
         with open("data.json") as f:
             data = json.load(f)
@@ -25,15 +29,12 @@ def check_data_file() -> dict:
 
     return data
 
-def add_to_file():
-    try:
-        with open("data.json") as f:
-            new_data = json.load(f)
-            print(new_data)
-    except:
-        print("error opening file")
-
 def tdee_input(data):
+    """
+    Adds TDEE record(s) to the data.json file under the 'tdee' key.
+
+    Asks user for the date, weight, and calories for each entry.
+    """
     while True:
         print("Add TDEE record. Enter 'e' to exit.")
 
@@ -62,6 +63,11 @@ def tdee_input(data):
     print(data["tdee"])
 
 def display_data(data):
+    """
+    Calculates and displays calorie and macro data to the user.
+
+    If no entries exist, prompts the user to enter data.
+    """
     try:
         current_weight = data["user"]["current_weight"]
         current_tdee = data["user"]["current_tdee"]
@@ -96,6 +102,9 @@ def display_data(data):
             tdee_input(data)
 
 def menu():
+    """
+    Displays the main menu to the user.
+    """
     menu_options = {
         1: "View current calorie and macro goal",
         2: "Record TDEE",
@@ -134,14 +143,6 @@ def main():
             exit()
         else:
             print("Invalid option, please enter a number between 1 and 5.")
-
-    # Get current stats
-    # current_weight = input("Your current weight (lbs): ")
-    
-    # current_tdee = input("Your current TDEE (calories): ")
-    
-
-    
 
 if __name__ == "__main__":
     main()
