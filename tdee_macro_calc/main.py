@@ -1,6 +1,7 @@
 import json
 from rich.console import Console
 from rich.prompt import Prompt
+from rich.markdown import Markdown
 
 c = Console()
 
@@ -13,7 +14,6 @@ def check_data_file() -> dict:
     try:
         with open("data.json") as f:
             data = json.load(f)
-            # print(data)
 
     except FileNotFoundError:
         with open("data.json", "x") as f:
@@ -26,7 +26,7 @@ def check_data_file() -> dict:
                         "tdee": []
                     }
             f.write(json.dumps(data))
-
+    print(data)
     return data
 
 def tdee_input(data):
