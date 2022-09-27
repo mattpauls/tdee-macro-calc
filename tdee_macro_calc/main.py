@@ -124,26 +124,19 @@ def tdee_input():
 
     print(data["tdee"])
 
-def main():
-
-    data = check_data_file()
-
-    # Get current stats
-    # current_weight = input("Your current weight (lbs): ")
-    
-    # current_tdee = input("Your current TDEE (calories): ")
+def display_data():
     try:
         current_weight = data["user"]["current_weight"]
         current_tdee = data["user"]["current_tdee"]
 
         # Calculate calorie deficit
         target_calorie_deficit = 3.2 * float(current_weight)
-        target_calorie_intake = float(current_tdee) - float(target_calorie_deficit)
+        target_calorie_intake = round(float(current_tdee) - float(target_calorie_deficit))
 
         # Calculate Macros
-        protein_grams = .8 * float(current_weight)
-        fat_grams = .3 * float(current_weight)
-        carbs_grams = (target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4
+        protein_grams = round(.8 * float(current_weight))
+        fat_grams = round(.3 * float(current_weight))
+        carbs_grams = round((target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4)
 
         # Output info to user
         c.rule(title="Statistics")
@@ -158,6 +151,53 @@ def main():
         c.print("Target carbs intake (grams):", str(carbs_grams))
     except:
         print("No current weight or tdee data")
+
+    input("Press Enter to continue...")
+
+def menu():
+    menu_options = {
+        1: "View current calorie and macro goal",
+        2: "Record TDEE",
+        3: "Change or update calorie and macro targets",
+        4: "Start over and delete all data",
+        5: "Exit"
+    }
+    
+    for key in menu_options.keys():
+        print(key, ":", menu_options[key])
+
+
+def main():
+    # Check to see if there's a data.json file, and create it with defaults if not.
+    data = check_data_file()
+
+    # Display menu
+    while(True):
+        menu()
+        option = 0
+        try:
+            option = int(input("Enter your choice: "))
+        except:
+            print("Wrong input, please enter a number.")
+        if option == 1:
+            print("View current info")
+            display_data()
+        elif option == 2:
+            print("Record TDEE")
+        elif option == 3:
+            print("Change or update calorie and macro targets")
+        elif option == 4:
+            print("Start over")
+        elif option == 5:
+            exit()
+        else:
+            print("Invalid option, please enter a number between 1 and 5.")
+
+    # Get current stats
+    # current_weight = input("Your current weight (lbs): ")
+    
+    # current_tdee = input("Your current TDEE (calories): ")
+    
 
     
 
