@@ -53,7 +53,8 @@ def tdee_input(data):
                 if record_date == "e":
                     break
                 if record_date == "":
-                    print("using default date", today)
+                    print("Using today's date", today)
+                    record_date = today
                 else:
                     try:
                         my_date = datetime.strptime(record_date, "%m/%d/%Y").date()
