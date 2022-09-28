@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, date
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
@@ -35,6 +36,8 @@ def tdee_input(data):
 
     Asks user for the date, weight, and calories for each entry.
     """
+    # TODO type check values
+    # TODO make it easier to enter dates, once one is added, increment as a default
     try:
         with open("data.json", "r+") as f:
             f_data = json.load(f)
@@ -43,9 +46,20 @@ def tdee_input(data):
                 print("Add TDEE record. Enter 'e' to exit.")
 
                 # Prompt user for date of entry
-                date = Prompt.ask("Date")
-                if date == "e":
+                today = datetime.strftime(date.today(), "%m/%d/%Y")
+                print(datetime.strftime(date.today(), "%m/%d/%Y"))
+
+                record_date = Prompt.ask("Date (%s)" % today)
+                if record_date == "e":
                     break
+                if record_date == "":
+                    print("using default date", today)
+                else:
+                    try:
+                        my_date = datetime.strptime(record_date, "%m/%d/%Y").date()
+                        print(my_date)
+                    except ValueError:
+                        print("Invalid date, try again")
 
                 # Prompt user for weight
                 weight = Prompt.ask("Weight")
@@ -59,7 +73,7 @@ def tdee_input(data):
 
                 # Append to tdee file
                 f_data["tdee"].append({
-                    "date": date,
+                    "date": record_date,
                     "weight": float(weight),
                     "calories": int(calories)
                 })
