@@ -35,32 +35,42 @@ def tdee_input(data):
 
     Asks user for the date, weight, and calories for each entry.
     """
-    while True:
-        print("Add TDEE record. Enter 'e' to exit.")
+    try:
+        with open("data.json", "r+") as f:
+            f_data = json.load(f)
 
-        # Prompt user for date of entry
-        date = Prompt.ask("Date")
-        if date == "e":
-            break
+            while True:
+                print("Add TDEE record. Enter 'e' to exit.")
 
-        # Prompt user for weight
-        weight = Prompt.ask("Weight: ")
-        if weight == "e":
-            break
+                # Prompt user for date of entry
+                date = Prompt.ask("Date")
+                if date == "e":
+                    break
 
-        # Prompt user for calories consumed
-        calories = Prompt.ask("Calories: ")
-        if calories == "e":
-            break
+                # Prompt user for weight
+                weight = Prompt.ask("Weight")
+                if weight == "e":
+                    break
 
-        # Append to data
-        data["tdee"].append({
-            "date": date,
-            "weight": float(weight),
-            "calories": int(calories)
-        })
+                # Prompt user for calories consumed
+                calories = Prompt.ask("Calories")
+                if calories == "e":
+                    break
 
-    print(data["tdee"])
+                # Append to tdee file
+                f_data["tdee"].append({
+                    "date": date,
+                    "weight": float(weight),
+                    "calories": int(calories)
+                })
+
+                f.seek(0)
+
+                json.dump(f_data, f)
+
+    except FileNotFoundError:
+        print("file wasn't found")
+    
 
 def display_data(data):
     """
