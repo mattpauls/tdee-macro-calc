@@ -1,5 +1,6 @@
 import json
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from xmlrpc.client import Boolean
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
@@ -30,6 +31,18 @@ def check_data_file() -> dict:
     print(data)
     return data
 
+def check_valid_date(my_date: str) -> Boolean:
+    """
+    Checks if the input is a valid date string, in the format MM/DD/YYYY.
+
+    Returns True if so, False if not.
+    """
+    try:
+        datetime.strptime(my_date, "%m/%d/%Y").date()
+        return True
+    except:
+        return False
+
 def tdee_input(data):
     """
     Adds TDEE record(s) to the data.json file under the 'tdee' key.
@@ -42,25 +55,38 @@ def tdee_input(data):
         with open("data.json", "r+") as f:
             f_data = json.load(f)
 
+            # Set default date to None
+            default_date = None
+
             while True:
-                print("Add TDEE record. Enter 'e' to exit.")
+                print("Add TDEE record(s). Enter 'e' to exit.")
 
+                # Sets default_date to date.today()
+                if default_date is None:
+                    default_date = datetime.strftime(date.today(), "%m/%d/%Y")
+                    print(datetime.strftime(date.today(), "%m/%d/%Y"))
+                else:
+                    # Increment the default_date by a day
+                    default_date = datetime.strptime(record_date, "%m/%d/%Y").date() + timedelta(days=1)
+                    record_date = ""
+                
                 # Prompt user for date of entry
-                today = datetime.strftime(date.today(), "%m/%d/%Y")
-                print(datetime.strftime(date.today(), "%m/%d/%Y"))
-
-                record_date = Prompt.ask("Date (%s)" % today)
+                record_date = Prompt.ask("Date (%s)" % default_date)
+                
+                # Exit if requested
                 if record_date == "e":
                     break
+                
+                # Otherwise, if Enter is pressed, use today's date
                 if record_date == "":
-                    print("Using today's date", today)
-                    record_date = today
+                    print("Using default date", default_date)
+                    record_date = default_date
+                # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
                 else:
-                    try:
-                        my_date = datetime.strptime(record_date, "%m/%d/%Y").date()
-                        print(my_date)
-                    except ValueError:
-                        print("Invalid date, try again")
+                    # Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
+                    # Set record_date equal to it then check with the while loop below
+                    while not check_valid_date(record_date):
+                        record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
 
                 # Prompt user for weight
                 weight = Prompt.ask("Weight")
@@ -94,6 +120,7 @@ def display_data(data):
     If no entries exist, prompts the user to enter data.
     """
     try:
+        # TODO change these to calculate based off of recorded data, if it exists
         current_weight = data["user"]["current_weight"]
         current_tdee = data["user"]["current_tdee"]
 
@@ -145,6 +172,7 @@ def menu():
 def main():
     # Check to see if there's a data.json file, and create it with defaults if not.
     data = check_data_file()
+    print(data)
 
     # Display menu
     while(True):
