@@ -83,20 +83,48 @@ def tdee_input(data):
                     record_date = default_date
                 # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
                 else:
-                    # Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
-                    # Set record_date equal to it then check with the while loop below
+                    # TODO Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
+                    # Check record_date validity with the while loop below
                     while not check_valid_date(record_date):
                         record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
 
-                # Prompt user for weight
-                weight = Prompt.ask("Weight")
+                # Get weight
+                while True:
+                    # Prompt user for weight in lbs
+                    weight = Prompt.ask("Weight")
+
+                    if not weight == "e":
+                        try:
+                            # If weight isn't 'e', check the type of weight, make sure it's an int
+                            float(weight)
+                            break
+                        except ValueError:
+                            print("Please enter a valid number.")
+                    else:
+                        break
+
                 if weight == "e":
                     break
 
-                # Prompt user for calories consumed
-                calories = Prompt.ask("Calories")
+                # Get calories consumed
+                while True:
+                    # Prompt user for weight in lbs
+                    calories = Prompt.ask("Calories")
+
+                    if not calories == "e":
+                        try:
+                            # If weight isn't 'e', check the type of weight, make sure it's an int
+                            int(calories)
+                            break
+                        except ValueError:
+                            print("Please enter a valid number.")
+                    else:
+                        break
+
                 if calories == "e":
                     break
+                #while not isinstance(calories, int):
+                #    calories = Prompt.ask("Please enter a valid number for calories")
 
                 # Append to tdee file
                 f_data["tdee"].append({
