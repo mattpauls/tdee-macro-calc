@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, date, timedelta
+from operator import add
 from xmlrpc.client import Boolean
 from rich.console import Console
 from rich.prompt import Prompt
@@ -54,18 +55,15 @@ def tdee_input(data):
         with open("data.json", "r+") as f:
             f_data = json.load(f)
 
-            # Set default date to None
-            default_date = None
+            # Sets default_date to date.today()
+            default_date = datetime.strftime(date.today(), "%m/%d/%Y")
+            added_record = False
 
             while True:
                 print("Add TDEE record(s). Enter 'e' to exit.")
 
-                # Sets default_date to date.today()
-                if default_date is None:
-                    default_date = datetime.strftime(date.today(), "%m/%d/%Y")
-                    print(datetime.strftime(date.today(), "%m/%d/%Y"))
-                else:
-                    # Increment the default_date by a day
+                if added_record:
+                    # Increment the default_date by a day, if this is not the first record we've added
                     default_date = datetime.strptime(record_date, "%m/%d/%Y").date() + timedelta(days=1)
                     record_date = ""
                 
@@ -134,6 +132,9 @@ def tdee_input(data):
                 f.seek(0)
 
                 json.dump(f_data, f)
+
+                # We've added a record, so set added_record to True
+                added_record = True
 
     except FileNotFoundError:
         print("file wasn't found")
