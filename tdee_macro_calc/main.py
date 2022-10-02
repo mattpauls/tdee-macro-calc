@@ -26,7 +26,6 @@ def check_data_file() -> dict:
                         "tdee": []
                     }
             f.write(json.dumps(data))
-    print(data)
     return data
 
 def tdee_input(data):
