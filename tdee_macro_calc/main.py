@@ -2,6 +2,8 @@ import json
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
+from pathlib import Path
+import os
 
 c = Console()
 
@@ -11,12 +13,27 @@ def check_data_file() -> dict:
 
     Returns a dictionary of the user and tdee information in the file.
     """
+    # Gather current user's directory information
+    home = str(Path.home())
+    tdee_directory = os.path.join(home, ".tdee")
+    
+    # If the .tdee directory doesn't exist in the user's home folder, create it.
+    if not os.path.isdir(tdee_directory):
+        try:
+            os.mkdir(tdee_directory)
+        except:
+            print("Directory already exists or another error.")
+
+    tdee_data = os.path.join(tdee_directory, "data.json")
+
+    # Try opening the data.json file in the .tdee folder
     try:
-        with open("data.json") as f:
+        with open(tdee_data) as f:
             data = json.load(f)
 
+    # If ~/.tdee/data.json does not exist, create it
     except FileNotFoundError:
-        with open("data.json", "x") as f:
+        with open(tdee_data, "x") as f:
             data = {
                         "user": {
                             "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
