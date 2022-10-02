@@ -49,7 +49,6 @@ def tdee_input(data):
 
     Asks user for the date, weight, and calories for each entry.
     """
-    # TODO type check values
     # TODO make it easier to enter dates, once one is added, increment as a default
     try:
         with open("data.json", "r+") as f:
@@ -83,6 +82,7 @@ def tdee_input(data):
                     record_date = default_date
                 # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
                 else:
+                    print(datetime.strptime(record_date, "%m/%d/%Y"))
                     # TODO Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
                     # Check record_date validity with the while loop below
                     while not check_valid_date(record_date):
@@ -123,8 +123,6 @@ def tdee_input(data):
 
                 if calories == "e":
                     break
-                #while not isinstance(calories, int):
-                #    calories = Prompt.ask("Please enter a valid number for calories")
 
                 # Append to tdee file
                 f_data["tdee"].append({
