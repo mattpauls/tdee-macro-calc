@@ -44,6 +44,14 @@ def check_valid_date(my_date: str) -> Boolean:
     except:
         return False
 
+def convert_date(my_date):
+    """
+    Converts a date and returns a string.
+    """
+
+    return datetime.strftime(my_date, "%m/%d/%Y")
+
+
 def tdee_input(data):
     """
     Adds TDEE record(s) to the data.json file under the 'tdee' key.
@@ -56,7 +64,7 @@ def tdee_input(data):
             f_data = json.load(f)
 
             # Sets default_date to date.today()
-            default_date = datetime.strftime(date.today(), "%m/%d/%Y")
+            default_date = date.today()
             added_record = False
 
             while True:
@@ -64,11 +72,12 @@ def tdee_input(data):
 
                 if added_record:
                     # Increment the default_date by a day, if this is not the first record we've added
-                    default_date = datetime.strptime(record_date, "%m/%d/%Y").date() + timedelta(days=1)
+                    # default_date = datetime.strptime(record_date, "%m/%d/%Y").date() + timedelta(days=1)
+                    default_date = record_date + timedelta(days=1)
                     record_date = ""
                 
                 # Prompt user for date of entry
-                record_date = Prompt.ask("Date (%s)" % default_date)
+                record_date = Prompt.ask("Date (%s)" % datetime.strftime(default_date, "%m/%d/%Y"))
                 
                 # Exit if requested
                 if record_date == "e":
@@ -76,15 +85,18 @@ def tdee_input(data):
                 
                 # Otherwise, if Enter is pressed, use today's date
                 if record_date == "":
-                    print("Using default date", default_date)
+                    print("Using default date", convert_date(default_date))
+                    print(type(default_date))
                     record_date = default_date
                 # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
                 else:
-                    print(datetime.strptime(record_date, "%m/%d/%Y"))
+                    print("You entered", record_date)
+                    # TODO Convert entered date into datetime object #############
                     # TODO Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
                     # Check record_date validity with the while loop below
                     while not check_valid_date(record_date):
                         record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
+
 
                 # Get weight
                 while True:
@@ -124,7 +136,7 @@ def tdee_input(data):
 
                 # Append to tdee file
                 f_data["tdee"].append({
-                    "date": record_date,
+                    "date": convert_date(record_date),
                     "weight": float(weight),
                     "calories": int(calories)
                 })
