@@ -3,7 +3,6 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
 from pathlib import Path
-import os
 
 c = Console()
 
@@ -14,17 +13,10 @@ def check_data_file() -> dict:
     Returns a dictionary of the user and tdee information in the file.
     """
     # Gather current user's directory information
-    home = str(Path.home())
-    tdee_directory = os.path.join(home, ".tdee")
-    
-    # If the .tdee directory doesn't exist in the user's home folder, create it.
-    if not os.path.isdir(tdee_directory):
-        try:
-            os.mkdir(tdee_directory)
-        except:
-            print("Directory already exists or another error.")
-
-    tdee_data = os.path.join(tdee_directory, "data.json")
+    home = Path.home()
+    tdee_directory = home / ".tdee"
+    tdee_directory.mkdir(exist_ok=True)
+    tdee_data = tdee_directory / "data.json"
 
     # Try opening the data.json file in the .tdee folder
     try:
