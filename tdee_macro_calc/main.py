@@ -48,8 +48,14 @@ def convert_date(my_date):
     """
     Converts a date and returns a string.
     """
-
-    return datetime.strftime(my_date, "%m/%d/%Y")
+    if isinstance(my_date, datetime):
+        print("convert date to string: strptime")
+        return datetime.strftime(my_date, "%m/%d/%Y")
+    elif isinstance(my_date, str):
+        print("convert date to string: already string")
+        return my_date
+    else:
+        return
 
 
 def tdee_input(data):
@@ -58,7 +64,6 @@ def tdee_input(data):
 
     Asks user for the date, weight, and calories for each entry.
     """
-    # TODO make it easier to enter dates, once one is added, increment as a default
     try:
         with open("data.json", "r+") as f:
             f_data = json.load(f)
@@ -72,7 +77,6 @@ def tdee_input(data):
 
                 if added_record:
                     # Increment the default_date by a day, if this is not the first record we've added
-                    # default_date = datetime.strptime(record_date, "%m/%d/%Y").date() + timedelta(days=1)
                     default_date = record_date + timedelta(days=1)
                     record_date = ""
                 
@@ -84,18 +88,22 @@ def tdee_input(data):
                     break
                 
                 # Otherwise, if Enter is pressed, use today's date
-                if record_date == "":
+                if record_date is "":
                     print("Using default date", convert_date(default_date))
-                    print(type(default_date))
                     record_date = default_date
                 # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
                 else:
-                    print("You entered", record_date)
-                    # TODO Convert entered date into datetime object #############
-                    # TODO Perhaps try to convert dates with no leading zeros and not a full YYYY here. 
+                    # TODO I think this is a little hacky, I'm sure there's a better way to handle 2 or 4 digit entries.
+                    # TODO Also need to add in validation of date entries, in case of mistypes
+                    # Convert entered string into a date, either with the 4-digit year or 2-digit year
+                    try:
+                        record_date = datetime.strptime(record_date, "%m/%d/%Y")
+                    except:
+                        record_date = datetime.strptime(record_date, "%m/%d/%y")
                     # Check record_date validity with the while loop below
-                    while not check_valid_date(record_date):
-                        record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
+                    # while not check_valid_date(record_date):
+                    #     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
+                    #     record_date = datetime.strptime(record_date, "%m/%d/%Y")
 
 
                 # Get weight
@@ -134,15 +142,16 @@ def tdee_input(data):
                 if calories == "e":
                     break
 
-                # Append to tdee file
+                # Append to tdee data
                 f_data["tdee"].append({
-                    "date": convert_date(record_date),
+                    "date": convert_date(record_date), # Convert the datetime object to string
                     "weight": float(weight),
                     "calories": int(calories)
                 })
 
                 f.seek(0)
 
+                # Write file with our new data
                 json.dump(f_data, f)
 
                 # We've added a record, so set added_record to True
