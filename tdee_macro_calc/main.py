@@ -5,6 +5,7 @@ from xmlrpc.client import Boolean
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
+from pathlib import Path
 
 c = Console()
 
@@ -14,22 +15,30 @@ def check_data_file() -> dict:
 
     Returns a dictionary of the user and tdee information in the file.
     """
+
+    # Gather current user's directory information and set up ~/.tdee/data.json
+    home = Path.home()
+    tdee_directory = home / ".tdee"
+    tdee_directory.mkdir(exist_ok=True)
+    tdee_data = tdee_directory / "data.json"
+
+    # Try opening the data.json file in the .tdee folder
     try:
-        with open("data.json") as f:
+        with tdee_data.open() as f:
             data = json.load(f)
 
+    # If ~/.tdee/data.json does not exist, create it and add default data
     except FileNotFoundError:
-        with open("data.json", "x") as f:
-            data = {
-                        "user": {
-                            "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
-                            "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
-                            "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
-                        },
-                        "tdee": []
-                    }
-            f.write(json.dumps(data))
-    print(data)
+        tdee_data.touch()
+        data = {
+                "user": {
+                    "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
+                    "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
+                    "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
+                },
+                "tdee": []
+            }
+        tdee_data.write_text(json.dumps(data))
     return data
 
 def check_valid_date(my_date: str) -> Boolean:
