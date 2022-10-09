@@ -9,7 +9,7 @@ from pathlib import Path
 
 c = Console()
 
-def check_data_file() -> dict:
+def check_data_file():
     """
     Checks to see if the file data.json exists, and if not it creates it with default values.
 
@@ -24,8 +24,8 @@ def check_data_file() -> dict:
 
     # Try opening the data.json file in the .tdee folder
     try:
-        with tdee_data.open() as f:
-            data = json.load(f)
+        contents = tdee_data.read_text()
+        data = json.loads(contents)
 
     # If ~/.tdee/data.json does not exist, create it and add default data
     except FileNotFoundError:
@@ -39,7 +39,7 @@ def check_data_file() -> dict:
                 "tdee": []
             }
         tdee_data.write_text(json.dumps(data))
-    return data
+    return (tdee_data, data)
 
 def check_valid_date(my_date: str) -> Boolean:
     """
@@ -67,14 +67,14 @@ def convert_date(my_date):
         return
 
 
-def tdee_input(data):
+def tdee_input(tdee_data_file, data):
     """
     Adds TDEE record(s) to the data.json file under the 'tdee' key.
 
     Asks user for the date, weight, and calories for each entry.
     """
     try:
-        with open("data.json", "r+") as f:
+        with open(tdee_data_file, "r+") as f:
             f_data = json.load(f)
 
             # Sets default_date to date.today()
@@ -97,7 +97,7 @@ def tdee_input(data):
                     break
                 
                 # Otherwise, if Enter is pressed, use today's date
-                if record_date is "":
+                if record_date == "":
                     print("Using default date", convert_date(default_date))
                     record_date = default_date
                 # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
@@ -228,8 +228,7 @@ def menu():
 
 def main():
     # Check to see if there's a data.json file, and create it with defaults if not.
-    data = check_data_file()
-    print(data)
+    (tdee_data_file, data) = check_data_file()
 
     # Display menu
     while(True):
@@ -244,7 +243,7 @@ def main():
             display_data(data)
         elif option == 2:
             print("Record TDEE")
-            tdee_input(data)
+            tdee_input(tdee_data_file, data)
         elif option == 3:
             print("Change or update calorie and macro targets")
         elif option == 4:
