@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
 from pathlib import Path
+from dateutil.parser import *
 
 c = Console()
 
@@ -98,17 +99,14 @@ def tdee_input(tdee_data_file, data):
             record_date = default_date
         # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
         else:
-            # TODO I think this is a little hacky, I'm sure there's a better way to handle 2 or 4 digit entries.
-            # TODO Also need to add in validation of date entries, in case of mistypes
+            valid = None
             # Convert entered string into a date, either with the 4-digit year or 2-digit year
-            try:
-                record_date = datetime.strptime(record_date, "%m/%d/%Y")
-            except:
-                record_date = datetime.strptime(record_date, "%m/%d/%y")
-            # Check record_date validity with the while loop below
-            # while not check_valid_date(record_date):
-            #     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
-            #     record_date = datetime.strptime(record_date, "%m/%d/%Y")
+            while valid is None:
+                try:
+                    record_date = parse(record_date)
+                    valid = True
+                except:
+                    record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
 
 
         # Get weight
