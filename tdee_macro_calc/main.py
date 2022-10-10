@@ -164,7 +164,7 @@ def tdee_input(tdee_data_file, data):
         print("file wasn't found")
     
 
-def display_data(data):
+def display_data(tdee_data_file, data):
     """
     Calculates and displays calorie and macro data to the user.
 
@@ -202,7 +202,7 @@ def display_data(data):
         record_data = Prompt.ask("Would you like to record some data?", choices=["y", "n"])
 
         if record_data == "y":
-            tdee_input(data)
+            tdee_input(tdee_data_file, data)
 
 def menu():
     """
@@ -234,7 +234,7 @@ def main():
             print("Wrong input, please enter a number.")
         if option == 1:
             print("View current info")
-            display_data(data)
+            display_data(tdee_data_file, data)
         elif option == 2:
             print("Record TDEE")
             tdee_input(tdee_data_file, data)
@@ -248,5 +248,4 @@ def main():
             print("Invalid option, please enter a number between 1 and 5.")
 
 if __name__ == "__main__":
-    convert_date(date.today())
     main()
