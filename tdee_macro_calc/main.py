@@ -73,99 +73,93 @@ def tdee_input(tdee_data_file, data):
 
     Asks user for the date, weight, and calories for each entry.
     """
+
+    default_date = date.today()
+    added_record = False
+
+    while True:
+        print("Add TDEE record(s). Enter 'e' to save and exit.")
+
+        if added_record:
+            # Increment the default_date by a day, if this is not the first record we've added
+            default_date = record_date + timedelta(days=1)
+            record_date = ""
+        
+        # Prompt user for date of entry
+        record_date = Prompt.ask("Date (%s)" % datetime.strftime(default_date, "%m/%d/%Y"))
+        
+        # Exit if requested
+        if record_date == "e":
+            break
+        
+        # Otherwise, if Enter is pressed, use today's date
+        if record_date == "":
+            print("Using default date", str(default_date))
+            record_date = default_date
+        # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
+        else:
+            # TODO I think this is a little hacky, I'm sure there's a better way to handle 2 or 4 digit entries.
+            # TODO Also need to add in validation of date entries, in case of mistypes
+            # Convert entered string into a date, either with the 4-digit year or 2-digit year
+            try:
+                record_date = datetime.strptime(record_date, "%m/%d/%Y")
+            except:
+                record_date = datetime.strptime(record_date, "%m/%d/%y")
+            # Check record_date validity with the while loop below
+            # while not check_valid_date(record_date):
+            #     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
+            #     record_date = datetime.strptime(record_date, "%m/%d/%Y")
+
+
+        # Get weight
+        while True:
+            # Prompt user for weight in lbs
+            weight = Prompt.ask("Weight")
+
+            if not weight == "e":
+                try:
+                    # If weight isn't 'e', check the type of weight, make sure it's an int
+                    float(weight)
+                    break
+                except ValueError:
+                    print("Please enter a valid number.")
+            else:
+                break
+
+        if weight == "e":
+            break
+
+        # Get calories consumed
+        while True:
+            # Prompt user for weight in lbs
+            calories = Prompt.ask("Calories")
+
+            if not calories == "e":
+                try:
+                    # If weight isn't 'e', check the type of weight, make sure it's an int
+                    int(calories)
+                    break
+                except ValueError:
+                    print("Please enter a valid number.")
+            else:
+                break
+
+        if calories == "e":
+            break
+
+        # Append to tdee data dictionary
+        data["tdee"].append({
+            "date": convert_date(record_date), # Convert the datetime object to string
+            "weight": float(weight),
+            "calories": int(calories)
+        })
+
+        # We've added a record, so set added_record to True
+        added_record = True
+
     try:
-        with open(tdee_data_file, "r+") as f:
-            f_data = json.load(f)
-
-            # Sets default_date to date.today()
-            default_date = date.today()
-            added_record = False
-
-            while True:
-                print("Add TDEE record(s). Enter 'e' to exit.")
-
-                if added_record:
-                    # Increment the default_date by a day, if this is not the first record we've added
-                    default_date = record_date + timedelta(days=1)
-                    record_date = ""
-                
-                # Prompt user for date of entry
-                record_date = Prompt.ask("Date (%s)" % datetime.strftime(default_date, "%m/%d/%Y"))
-                
-                # Exit if requested
-                if record_date == "e":
-                    break
-                
-                # Otherwise, if Enter is pressed, use today's date
-                if record_date == "":
-                    print("Using default date", convert_date(default_date))
-                    record_date = default_date
-                # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
-                else:
-                    # TODO I think this is a little hacky, I'm sure there's a better way to handle 2 or 4 digit entries.
-                    # TODO Also need to add in validation of date entries, in case of mistypes
-                    # Convert entered string into a date, either with the 4-digit year or 2-digit year
-                    try:
-                        record_date = datetime.strptime(record_date, "%m/%d/%Y")
-                    except:
-                        record_date = datetime.strptime(record_date, "%m/%d/%y")
-                    # Check record_date validity with the while loop below
-                    # while not check_valid_date(record_date):
-                    #     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
-                    #     record_date = datetime.strptime(record_date, "%m/%d/%Y")
-
-
-                # Get weight
-                while True:
-                    # Prompt user for weight in lbs
-                    weight = Prompt.ask("Weight")
-
-                    if not weight == "e":
-                        try:
-                            # If weight isn't 'e', check the type of weight, make sure it's an int
-                            float(weight)
-                            break
-                        except ValueError:
-                            print("Please enter a valid number.")
-                    else:
-                        break
-
-                if weight == "e":
-                    break
-
-                # Get calories consumed
-                while True:
-                    # Prompt user for weight in lbs
-                    calories = Prompt.ask("Calories")
-
-                    if not calories == "e":
-                        try:
-                            # If weight isn't 'e', check the type of weight, make sure it's an int
-                            int(calories)
-                            break
-                        except ValueError:
-                            print("Please enter a valid number.")
-                    else:
-                        break
-
-                if calories == "e":
-                    break
-
-                # Append to tdee data
-                f_data["tdee"].append({
-                    "date": convert_date(record_date), # Convert the datetime object to string
-                    "weight": float(weight),
-                    "calories": int(calories)
-                })
-
-                f.seek(0)
-
-                # Write file with our new data
-                json.dump(f_data, f)
-
-                # We've added a record, so set added_record to True
-                added_record = True
-
+        # Write JSON data to file
+        tdee_data_file.write_text(json.dumps(data))
     except FileNotFoundError:
         print("file wasn't found")
     
