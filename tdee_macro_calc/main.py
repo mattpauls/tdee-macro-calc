@@ -55,9 +55,9 @@ def check_valid_date(my_date: str) -> Boolean:
 
 def convert_date(my_date):
     """
-    Converts a date and returns a string.
+    Converts a date to a string, formatted as MM/DD/YYYY.
     """
-    if isinstance(my_date, datetime):
+    if isinstance(my_date, datetime) or isinstance(my_date, date):
         print("convert date to string: strptime")
         return datetime.strftime(my_date, "%m/%d/%Y")
     elif isinstance(my_date, str):
@@ -146,7 +146,7 @@ def tdee_input(tdee_data_file, data):
 
         if calories == "e":
             break
-
+        
         # Append to tdee data dictionary
         data["tdee"].append({
             "date": convert_date(record_date), # Convert the datetime object to string
@@ -248,4 +248,5 @@ def main():
             print("Invalid option, please enter a number between 1 and 5.")
 
 if __name__ == "__main__":
+    convert_date(date.today())
     main()
