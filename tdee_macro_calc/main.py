@@ -59,10 +59,8 @@ def convert_date(my_date):
     Converts a date to a string, formatted as MM/DD/YYYY.
     """
     if isinstance(my_date, datetime) or isinstance(my_date, date):
-        print("convert date to string: strptime")
         return datetime.strftime(my_date, "%m/%d/%Y")
     elif isinstance(my_date, str):
-        print("convert date to string: already string")
         return my_date
     else:
         return
@@ -99,15 +97,13 @@ def tdee_input(tdee_data_file, data):
             record_date = default_date
         # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
         else:
-            valid = None
             # Convert entered string into a date, either with the 4-digit year or 2-digit year
-            while valid is None:
+            while True:
                 try:
                     record_date = parse(record_date)
-                    valid = True
+                    break
                 except:
                     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
-
 
         # Get weight
         while True:
