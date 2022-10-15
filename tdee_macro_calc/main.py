@@ -76,7 +76,7 @@ def tdee_input(tdee_data_file, data):
     Asks user for the date, weight, and calories for each entry.
     """
 
-    default_date = date.today()
+    record_date = date.today()
     added_record = False
 
     while True:
@@ -86,21 +86,15 @@ def tdee_input(tdee_data_file, data):
         print("\n")
 
         if added_record:
-            # Increment the default_date by a day, if this is not the first record we've added
-            default_date = record_date + timedelta(days=1)
-            record_date = ""
+            # Increment the record_date by a day, if this is not the first record we've added
+            record_date+= timedelta(days=1)
         
         # Prompt user for date of entry
-        record_date = Prompt.ask("Date (%s)" % datetime.strftime(default_date, "%m/%d/%Y"))
+        record_date = Prompt.ask("Date", default=datetime.strftime(record_date, "%m/%d/%Y"))
         
         # Exit if requested
         if record_date == "e":
             break
-        
-        # Otherwise, if Enter is pressed, use today's date
-        if record_date == "":
-            print("Using default date", convert_date(default_date))
-            record_date = default_date
         # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
         else:
             # Convert entered string into a date, either with the 4-digit year or 2-digit year
@@ -114,7 +108,7 @@ def tdee_input(tdee_data_file, data):
         # Get weight
         while True:
             # Prompt user for weight in lbs
-            weight = Prompt.ask("Weight")
+            weight = Prompt.ask("Weight") # TODO considering using Rich's FloatPrompt or IntPrompt, but not sure how to handle exiting entry without adding another y/n prompt to the process. Perhaps I could switch to using 0 as the exit key.
 
             if not weight == "e":
                 try:
