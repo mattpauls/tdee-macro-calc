@@ -1,7 +1,10 @@
+from curses import panel
 import json
 from datetime import datetime, date, timedelta
 from operator import add
 from xmlrpc.client import Boolean
+from rich import print
+from rich.panel import Panel
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.markdown import Markdown
@@ -77,7 +80,10 @@ def tdee_input(tdee_data_file, data):
     added_record = False
 
     while True:
+        print("\n")
+        c.rule(title="Record TDEE")
         print("Add TDEE record(s). Enter 'e' to save and exit.")
+        print("\n")
 
         if added_record:
             # Increment the default_date by a day, if this is not the first record we've added
@@ -93,7 +99,7 @@ def tdee_input(tdee_data_file, data):
         
         # Otherwise, if Enter is pressed, use today's date
         if record_date == "":
-            print("Using default date", str(default_date))
+            print("Using default date", convert_date(default_date))
             record_date = default_date
         # If something was entered, then check to see if it's a valid date, convert it if possible, and then continue on with the rest of the record
         else:
@@ -125,12 +131,12 @@ def tdee_input(tdee_data_file, data):
 
         # Get calories consumed
         while True:
-            # Prompt user for weight in lbs
+            # Prompt user for calories
             calories = Prompt.ask("Calories")
 
             if not calories == "e":
                 try:
-                    # If weight isn't 'e', check the type of weight, make sure it's an int
+                    # If calories isn't 'e', check the type of calories, make sure it's an int
                     int(calories)
                     break
                 except ValueError:
@@ -209,9 +215,11 @@ def menu():
         4: "Start over and delete all data",
         5: "Exit"
     }
-    
+    print("\n")
+    c.rule(title="TDEE and Macro Calculator")
     for key in menu_options.keys():
         print(key, ":", menu_options[key])
+    print("\n")
 
 
 def main():
@@ -230,7 +238,6 @@ def main():
             print("View current info")
             display_data(tdee_data_file, data)
         elif option == 2:
-            print("Record TDEE")
             tdee_input(tdee_data_file, data)
         elif option == 3:
             print("Change or update calorie and macro targets")
