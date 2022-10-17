@@ -37,3 +37,14 @@ For weight loss, macros, or the amount of protein, fat, and carbs one should eat
 Lose weight and build muscle simultaneously: https://thefitness.wiki/faq/can-i-lose-fat-and-build-muscle-at-the-same-time/
 
 Recommended Macros: https://thefitness.wiki/improving-your-diet/#General_Diet_Improvement
+
+## Running tests
+
+Install the test dependencies:
+```
+pip install ".[test]"
+```
+and run pytest
+```
+pytest
+```
