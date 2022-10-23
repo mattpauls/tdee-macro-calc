@@ -33,6 +33,10 @@ Documentation = "https://github.com/mattpauls/tdee-macro-calc#readme"
 Issues = "https://github.com/mattpauls/tdee-macro-calc/issues"
 Source = "https://github.com/mattpauls/tdee-macro-calc"
 
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+]
 
 [project.scripts]
 tdee = "tdee_macro_calc.main:main"
