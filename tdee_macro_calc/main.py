@@ -1,16 +1,10 @@
-from curses import panel
 import json
 from datetime import datetime, date, timedelta
-from operator import add
-from xmlrpc.client import Boolean
 from typing import Union
 from typing import Optional
-from rich import print
-from rich.panel import Panel
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.text import Text
-from rich.markdown import Markdown
 from pathlib import Path
 from dateutil.parser import *
 
@@ -49,7 +43,7 @@ def check_data_file(home_dir: Path = HOME) -> dict:
         tdee_data.write_text(json.dumps(data))
     return (tdee_data, data)
 
-def check_valid_date(my_date: str) -> Boolean:
+def check_valid_date(my_date: str) -> bool:
     """
     Checks if the input is a valid date string, in the format MM/DD/YYYY.
 
