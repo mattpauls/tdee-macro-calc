@@ -3,10 +3,13 @@ import json
 from datetime import datetime, date, timedelta
 from operator import add
 from xmlrpc.client import Boolean
+from typing import Union
+from typing import Optional
 from rich import print
 from rich.panel import Panel
 from rich.console import Console
 from rich.prompt import Prompt
+from rich.text import Text
 from rich.markdown import Markdown
 from pathlib import Path
 from dateutil.parser import *
@@ -69,6 +72,46 @@ def convert_date(my_date):
         return
 
 
+def prompt_or_exit(
+    prompt: str,
+    default: Optional[Union[str, int, float]] = None,
+    dtype: type = str,
+    exit_char: str = "e"
+) -> Union[str, int, float]:
+    """Build a prompt that validates input.
+
+    Returns when the user 'exits' using the
+    exit character or enters valid input.
+
+    Parameters
+    ----------
+    prompt: str
+        The prompt to ask the user.
+    default:
+        The default value of the prompt if no answer is given.
+    dtype:
+    """
+    while True:
+        resp = Prompt.ask(prompt, default=default)
+        # Is this an exit
+        if resp == exit_char:
+            return resp
+        try:
+            # Handle an empty entry.
+            if not resp:
+                raise ValueError
+            resp = dtype(resp)
+            return resp
+        # Re-prompt user if value is invalid.
+        except (ValueError, TypeError):
+            text = Text()
+            text.append("\nOops, looks like there was a mistake...\n", style="bold red")
+            text.append(
+                f"\nExpected a value of type '{dtype.__name__}'. Please enter a valid value.\n",
+            )
+            c.print(text)
+
+
 def tdee_input(tdee_data_file, data):
     """
     Adds TDEE record(s) to the data.json file under the 'tdee' key.
@@ -80,18 +123,18 @@ def tdee_input(tdee_data_file, data):
     added_record = False
 
     while True:
-        print("\n")
+        c.print("\n")
         c.rule(title="Record TDEE")
-        print("Add TDEE record(s). Enter 'e' to save and exit.")
-        print("\n")
+        c.print("Add TDEE record(s). Enter 'e' to save and exit.")
+        c.print("\n")
 
         if added_record:
             # Increment the record_date by a day, if this is not the first record we've added
             record_date+= timedelta(days=1)
-        
+
         # Prompt user for date of entry
         record_date = Prompt.ask("Date", default=datetime.strftime(record_date, "%m/%d/%Y"))
-        
+
         # Exit if requested
         if record_date == "e":
             break
@@ -106,41 +149,15 @@ def tdee_input(tdee_data_file, data):
                     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
 
         # Get weight
-        while True:
-            # Prompt user for weight in lbs
-            weight = Prompt.ask("Weight") # TODO considering using Rich's FloatPrompt or IntPrompt, but not sure how to handle exiting entry without adding another y/n prompt to the process. Perhaps I could switch to using 0 as the exit key.
-
-            if not weight == "e":
-                try:
-                    # If weight isn't 'e', check the type of weight, make sure it's an int
-                    float(weight)
-                    break
-                except ValueError:
-                    print("Please enter a valid number.")
-            else:
-                break
-
+        weight = prompt_or_exit("Weight", dtype=float)
         if weight == "e":
             break
 
         # Get calories consumed
-        while True:
-            # Prompt user for calories
-            calories = Prompt.ask("Calories")
-
-            if not calories == "e":
-                try:
-                    # If calories isn't 'e', check the type of calories, make sure it's an int
-                    int(calories)
-                    break
-                except ValueError:
-                    print("Please enter a valid number.")
-            else:
-                break
-
+        calories = prompt_or_exit("Calories", dtype=float)
         if calories == "e":
             break
-        
+
         # Append to tdee data dictionary
         data["tdee"].append({
             "date": convert_date(record_date), # Convert the datetime object to string
@@ -156,7 +173,7 @@ def tdee_input(tdee_data_file, data):
         tdee_data_file.write_text(json.dumps(data))
     except FileNotFoundError:
         print("file wasn't found")
-    
+
 
 def display_data(tdee_data_file, data):
     """
