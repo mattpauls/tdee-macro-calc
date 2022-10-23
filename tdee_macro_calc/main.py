@@ -16,16 +16,17 @@ from dateutil.parser import *
 
 c = Console()
 
-def check_data_file():
+HOME = Path.home()
+
+
+def check_data_file(home_dir: Path = HOME) -> dict:
     """
     Checks to see if the file data.json exists, and if not it creates it with default values.
 
     Returns a dictionary of the user and tdee information in the file.
     """
-
     # Gather current user's directory information and set up ~/.tdee/data.json
-    home = Path.home()
-    tdee_directory = home / ".tdee"
+    tdee_directory = home_dir / ".tdee"
     tdee_directory.mkdir(exist_ok=True)
     tdee_data = tdee_directory / "data.json"
 
