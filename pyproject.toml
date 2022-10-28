@@ -24,7 +24,8 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "rich"
+  "rich",
+  "python-dateutil"
 ]
 dynamic = ["version"]
 
