@@ -70,29 +70,43 @@ def tdee_input(data):
             "calories": int(calories)
         })
 
+
 def display_data(data):
     """
     Calculates and displays calorie and macro data to the user.
 
     If no entries exist, prompts the user to enter data.
     """
-    try:
-        current_weight = data["user"]["current_weight"]
-        current_tdee = data["user"]["current_tdee"]
+    if data["tdee"]:  # Check if tdee list has data (returns true if it does have data)
+        # Calculate current_weight and current_calories
+        # TODO figure out how to handle duplicate entries on the same date? Perhaps restructure to a dict with date as the key?
+        number_records = len(data["tdee"])
 
+        average_weight = 0
+        average_calories = 0
+
+        for record in data["tdee"]:
+            average_weight += record["weight"]
+            average_calories += record["calories"]
+
+        average_weight = round((average_weight/number_records), 1)
+        average_calories = round(average_calories/number_records)
+
+        # TODO save average_weight and average_calories to data file
+        
         # Calculate calorie deficit
-        target_calorie_deficit = 3.2 * float(current_weight)
-        target_calorie_intake = round(float(current_tdee) - float(target_calorie_deficit))
+        target_calorie_deficit = 3.2 * float(average_weight)
+        target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
 
         # Calculate Macros
-        protein_grams = round(.8 * float(current_weight))
-        fat_grams = round(.3 * float(current_weight))
+        protein_grams = round(.8 * float(average_weight))
+        fat_grams = round(.3 * float(average_weight))
         carbs_grams = round((target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4)
 
         # Output info to user
         c.rule(title="Statistics")
-        c.print("Your current weight:", str(current_weight))
-        c.print("Your current TDEE:", str(current_tdee))
+        c.print("Your current average weight:", str(average_weight))
+        c.print("Your current TDEE:", str(average_calories))
         c.rule(title="Calories")
         c.print("Target calorie intake:", str(target_calorie_intake))
         c.print("Target calorie deficit:", str(target_calorie_deficit))
@@ -102,9 +116,9 @@ def display_data(data):
         c.print("Target carbs intake (grams):", str(carbs_grams))
 
         input("Press Enter to continue...")
-    except:
+    else:  # if no entry exists, prompt to enter some data (can't display no data!)
         print("No current weight or tdee data!")
-        record_data = Prompt.ask("Would you like to record some data?", choices=["y", "n"])
+        record_data = Prompt.ask("Would you like to record some data now?", choices=["y", "n"])
 
         if record_data == "y":
             tdee_input(data)
