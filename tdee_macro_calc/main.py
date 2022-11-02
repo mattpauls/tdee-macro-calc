@@ -194,7 +194,7 @@ def display_data(tdee_data_file, data):
         # TODO save average_weight and average_calories to data file
         
         # Calculate calorie deficit
-        target_calorie_deficit = 3.2 * float(average_weight)
+        target_calorie_deficit = round(3.2 * float(average_weight))
         target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
 
         # Calculate Macros
@@ -203,6 +203,7 @@ def display_data(tdee_data_file, data):
         carbs_grams = round((target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4)
 
         # Output info to user
+        c.print("\n")
         c.rule(title="Statistics")
         c.print("Your current average weight:", str(average_weight))
         c.print("Your current TDEE:", str(average_calories))
@@ -213,7 +214,7 @@ def display_data(tdee_data_file, data):
         c.print("Target protein intake (grams):", str(protein_grams))
         c.print("Target fat intake (grams):", str(fat_grams))
         c.print("Target carbs intake (grams):", str(carbs_grams))
-
+        c.print("\n")
         input("Press Enter to continue...")
     else:  # if no entry exists, prompt to enter some data (can't display no data!)
         print("No current weight or tdee data!")
@@ -253,7 +254,6 @@ def main():
         except:
             print("Wrong input, please enter a number.")
         if option == 1:
-            print("View current info")
             display_data(tdee_data_file, data)
         elif option == 2:
             tdee_input(tdee_data_file, data)
