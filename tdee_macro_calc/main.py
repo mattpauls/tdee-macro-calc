@@ -191,8 +191,13 @@ def display_data(tdee_data_file, data):
         average_weight = round((average_weight/number_records), 1)
         average_calories = round(average_calories/number_records)
 
-        # TODO save average_weight and average_calories to data file
-        
+        # Save average_weight and average_calories to data file
+        # This may be unnecessary, I'm not referencing it anywhere else and doing the calculations all at once.
+        data["user"]["average_weight"] = average_weight
+        data["user"]["average_calories"] = average_calories
+
+        tdee_data_file.write_text(json.dumps(data))
+
         # Calculate calorie deficit
         target_calorie_deficit = round(3.2 * float(average_weight))
         target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
