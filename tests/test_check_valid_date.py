@@ -11,4 +11,4 @@ from tdee_macro_calc.main import check_valid_date
     ("5/21", False)
 ])
 def test_check_valid_date(test_input, expected):
-    assert check_valid_date(test_input) is expected
+    assert check_valid_date(test_input) == expected
