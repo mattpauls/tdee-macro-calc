@@ -5,6 +5,7 @@ from typing import Optional
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.text import Text
+from rich.table import Table
 from pathlib import Path
 from dateutil.parser import *
 
@@ -144,6 +145,7 @@ def tdee_input(tdee_data_file, data):
                     record_date = Prompt.ask("Please enter a valid date (MM/DD/YYYY)")
 
         # Get weight
+        # TODO add checking to make sure that input is reasonable (e.g. not larger than 4 digits etc.)
         weight = prompt_or_exit("Weight", dtype=float)
         if weight == "e":
             break
@@ -179,6 +181,7 @@ def display_data(tdee_data_file, data):
     if data["tdee"]:  # Check if tdee list has data (returns true if it does have data)
         # Calculate current_weight and current_calories
         # TODO figure out how to handle duplicate entries on the same date? Perhaps restructure to a dict with date as the key?
+        # TODO perhaps restrict the number of records we calculate on to the most recent two weeks or month? Either total number of records or date range.
         number_records = len(data["tdee"])
 
         average_weight = 0
@@ -199,6 +202,7 @@ def display_data(tdee_data_file, data):
         tdee_data_file.write_text(json.dumps(data))
 
         # Calculate calorie deficit
+        # TODO allow user to choose a custom calorie deficit - the default feels pretty agressive
         target_calorie_deficit = round(3.2 * float(average_weight))
         target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
 
@@ -228,16 +232,32 @@ def display_data(tdee_data_file, data):
         if record_data == "y":
             tdee_input(tdee_data_file, data)
 
+
+def display_tdee_data(data):
+    tdee_table = Table(title="Recorded TDEE Data")
+
+    tdee_table.add_column("Date", style="green")
+    tdee_table.add_column("Weight")
+    tdee_table.add_column("Calories")
+
+    for record in data["tdee"]:
+        tdee_table.add_row(record["date"], str(record["weight"]), str(record["calories"]))
+
+    c.print("\n")
+    c.print(tdee_table)
+
+
 def menu():
     """
     Displays the main menu to the user.
     """
     menu_options = {
         1: "View current calorie and macro goal",
-        2: "Record TDEE",
-        3: "Change or update calorie and macro targets",
-        4: "Start over and delete all data",
-        5: "Exit"
+        2: "View recorded TDEE data",
+        3: "Record TDEE",
+        4: "Change or update calorie and macro targets",
+        5: "Start over and delete all data",
+        6: "Exit"
     }
     print("\n")
     c.rule(title="TDEE and Macro Calculator")
@@ -261,12 +281,14 @@ def main():
         if option == 1:
             display_data(tdee_data_file, data)
         elif option == 2:
-            tdee_input(tdee_data_file, data)
+            display_tdee_data(data)
         elif option == 3:
-            print("Change or update calorie and macro targets")
+            tdee_input(tdee_data_file, data)
         elif option == 4:
-            print("Start over")
+            print("Change or update calorie and macro targets")
         elif option == 5:
+            print("Start over")
+        elif option == 6:
             exit()
         else:
             print("Invalid option, please enter a number between 1 and 5.")
