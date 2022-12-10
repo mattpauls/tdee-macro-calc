@@ -172,12 +172,13 @@ def tdee_input(tdee_data_file, data):
         print("file wasn't found")
 
 
-def display_data(tdee_data_file, data):
+def calculate(data):
     """
-    Calculates and displays calorie and macro data to the user.
+    Calculates averages for calories and weight, based on saved settings in the data.json file.
 
-    If no entries exist, prompts the user to enter data.
+    Returns...dictionary with information?
     """
+
     if data["tdee"]:  # Check if tdee list has data (returns true if it does have data)
         # Calculate current_weight and current_calories
         # TODO figure out how to handle duplicate entries on the same date? Perhaps restructure to a dict with date as the key?
@@ -194,39 +195,63 @@ def display_data(tdee_data_file, data):
         average_weight = round((average_weight/number_records), 1)
         average_calories = round(average_calories/number_records)
 
-        # Save average_weight and average_calories to data file
+        # Save average_weight and average_calories to data
         # This may be unnecessary, I'm not referencing it anywhere else and doing the calculations all at once.
         data["user"]["average_weight"] = average_weight
         data["user"]["average_calories"] = average_calories
 
-        tdee_data_file.write_text(json.dumps(data))
-
         # Calculate calorie deficit
         # TODO allow user to choose a custom calorie deficit - the default feels pretty agressive
-        target_calorie_deficit = round(3.2 * float(average_weight))
+        target_calorie_deficit = round(data["user"]["per_lb_calorie_deficit"] * float(average_weight))
         target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
 
         # Calculate Macros
-        protein_grams = round(.8 * float(average_weight))
-        fat_grams = round(.3 * float(average_weight))
+        protein_grams = round(data["user"]["per_lb_protein"] * float(average_weight))
+        fat_grams = round(data["user"]["per_lb_fat"] * float(average_weight))
         carbs_grams = round((target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4)
+
+        # Save calculated data to data
+        data["user"]["protein_grams"] = protein_grams
+        data["user"]["fat_grams"] = fat_grams
+        data["user"]["carbs_grams"] = carbs_grams
+
+
+def save_calculations(tdee_data_file, data) -> None:
+    """"
+    Saves the results of calculate() to file.
+    """
+    tdee_data_file.write_text(json.dumps(data))
+
+
+def display_data(tdee_data_file, data):
+    """
+    Displays calculated calorie and macro data to the user.
+
+    If no entries exist, prompts the user to enter data.
+    """
+    c.print(data)
+
+    if data["tdee"]:  # Check if tdee list has data (returns true if it does have data)
+        # Calculate current_weight and current_calories
+        data = calculate(data)
+        save_calculations(tdee_data_file, data)
 
         # Output info to user
         c.print("\n")
         c.rule(title="Statistics")
-        c.print("Your current average weight:", str(average_weight))
-        c.print("Your current TDEE:", str(average_calories))
+        c.print("Your current average weight:", str(data["user"]["average_weight"]))
+        c.print("Your current TDEE:", str(data["user"]["average_calories"]))
         c.rule(title="Calories")
-        c.print("Target calorie intake:", str(target_calorie_intake))
-        c.print("Target calorie deficit:", str(target_calorie_deficit))
+        c.print("Target calorie intake:", str(data["user"]["target_calorie_intake"]))
+        c.print("Target calorie deficit:", str(data["user"]["target_calorie_deficit"]))
         c.rule(title="Macros")
-        c.print("Target protein intake (grams):", str(protein_grams))
-        c.print("Target fat intake (grams):", str(fat_grams))
-        c.print("Target carbs intake (grams):", str(carbs_grams))
+        c.print("Target protein intake (grams):", str(data["user"]["protein_grams"]))
+        c.print("Target fat intake (grams):", str(data["user"]["fat_grams"]))
+        c.print("Target carbs intake (grams):", str(data["user"]["carbs_grams"]))
         c.print("\n")
         input("Press Enter to continue...")
     else:  # if no entry exists, prompt to enter some data (can't display no data!)
-        print("No current weight or tdee data!")
+        print("No TDEE data!")
         record_data = Prompt.ask("Would you like to record some data now?", choices=["y", "n"])
 
         if record_data == "y":
