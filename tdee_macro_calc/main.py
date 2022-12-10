@@ -172,7 +172,7 @@ def tdee_input(tdee_data_file, data):
         print("file wasn't found")
 
 
-def calculate(data):
+def calculate(data) -> dict:
     """
     Calculates averages for calories and weight, based on saved settings in the data.json file.
 
@@ -205,15 +205,21 @@ def calculate(data):
         target_calorie_deficit = round(data["user"]["per_lb_calorie_deficit"] * float(average_weight))
         target_calorie_intake = round(float(average_calories) - float(target_calorie_deficit))
 
+        # Save calculated calorie deficit info to data
+        data["user"]["target_calorie_deficit"] = target_calorie_deficit
+        data["user"]["target_calorie_intake"] = target_calorie_deficit
+
         # Calculate Macros
         protein_grams = round(data["user"]["per_lb_protein"] * float(average_weight))
         fat_grams = round(data["user"]["per_lb_fat"] * float(average_weight))
         carbs_grams = round((target_calorie_intake - (protein_grams * 4) - (fat_grams * 9))/4)
 
-        # Save calculated data to data
+        # Save calculated macros to data
         data["user"]["protein_grams"] = protein_grams
         data["user"]["fat_grams"] = fat_grams
         data["user"]["carbs_grams"] = carbs_grams
+
+        return data
 
 
 def save_calculations(tdee_data_file, data) -> None:
@@ -229,7 +235,6 @@ def display_data(tdee_data_file, data):
 
     If no entries exist, prompts the user to enter data.
     """
-    c.print(data)
 
     if data["tdee"]:  # Check if tdee list has data (returns true if it does have data)
         # Calculate current_weight and current_calories
