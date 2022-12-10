@@ -183,6 +183,12 @@ def calculate(data) -> dict:
         # Calculate current_weight and current_calories
         # TODO figure out how to handle duplicate entries on the same date? Perhaps restructure to a dict with date as the key?
         # TODO perhaps restrict the number of records we calculate on to the most recent two weeks or month? Either total number of records or date range.
+
+        # TODO this is where I would want to calculate the average based on a setting in the data.json file, at ["user"]["weeks"]
+        # default will be 0, which indicates we'll just use all records.
+        # if greater than zero, use that int as the number of weeks we want to use, and calculate that (multiply by 7 first of course)
+        # if the number of weeks is greater than we have stored, throw an error or warn user and just use all the records we have and let them know it won't be accurate
+        # in order to make this happen, we need to sort our data by date and only grab the most recent number of data points within the timeframe requested.
         number_records = len(data["tdee"])
 
         average_weight = 0
