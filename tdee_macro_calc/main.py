@@ -194,9 +194,23 @@ def calculate(data) -> dict:
         number_records = len(data["tdee"])
 
         # Sort the list of dicts by the date key in reverse order. (note to self, fails on null values)
-        sorted_records = sorted(data["tdee"], key=lambda date: datetime.strptime(date["date"], "%m/%d/%Y"), reverse=True)
+        sorted_tdee = sorted(data["tdee"], key=lambda date: datetime.strptime(date["date"], "%m/%d/%Y"), reverse=True)
 
-        c.print(sorted_records)
+        c.print(sorted_tdee)
+
+        # Calculate the number of weeks in our dataset
+
+        # Get the last element in our sorted data (the oldest entry)
+        c.print(sorted_tdee[-1]["date"])
+        last_record = sorted_tdee[-1]["date"]
+
+        # Calculate weeks elapsed between the oldest record and today
+        weeks_elapsed = abs(datetime.strptime(last_record, "%m/%d/%Y") - datetime.today()).days//7
+
+        # When we calculate the averages, use something like 3 days a week for a minimum number of entries that we're looking for.
+        # It's a bit arbitrary but that should give us at least some data to work with
+
+        print(weeks_elapsed)
 
         average_weight = 0
         average_calories = 0
