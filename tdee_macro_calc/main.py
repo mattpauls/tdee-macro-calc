@@ -8,6 +8,7 @@ from rich.text import Text
 from rich.table import Table
 from pathlib import Path
 from dateutil.parser import *
+from operator import itemgetter
 
 c = Console()
 
@@ -37,7 +38,8 @@ def check_data_file(home_dir: Path = HOME) -> dict:
                 "user": {
                     "per_lb_calorie_deficit": 3.2, # use 3.2 as default but allow user to change, possibly. TODO look at study to confirm dropping this number works
                     "per_lb_protein": .8, # use .8 as default but allow user to change, and/or play with different numbers in memory
-                    "per_lb_fat": .3 # use .3 as default but allow user to change, and/or play with different numbers in memory
+                    "per_lb_fat": .3, # use .3 as default but allow user to change, and/or play with different numbers in memory
+                    "weeks": 0
                 },
                 "tdee": []
             }
@@ -191,12 +193,32 @@ def calculate(data) -> dict:
         # in order to make this happen, we need to sort our data by date and only grab the most recent number of data points within the timeframe requested.
         number_records = len(data["tdee"])
 
+        # Sort the list of dicts by the date key in reverse order. (note to self, fails on null values)
+        sorted_records = sorted(data["tdee"], key=lambda date: datetime.strptime(date["date"], "%m/%d/%Y"), reverse=True)
+
+        c.print(sorted_records)
+
         average_weight = 0
         average_calories = 0
 
-        for record in data["tdee"]:
-            average_weight += record["weight"]
-            average_calories += record["calories"]
+        # Trying to think this through. We want to make sure our dataset is valid enough to use, if I have 10 entries but they're scattered over 10 weeks, that's not valid.
+        # So just going off of number of records isn't enough, it has to be timely.
+        # I think I'm going to need to sort this list a lot sooner in the process and run calculations on that.
+
+        # If our dataset includes all data or if our dataset is already less than our requested amount, just include everything
+        if int(data["user"]["weeks"] == 0):
+            for record in data["tdee"]:
+                average_weight += record["weight"]
+                average_calories += record["calories"]
+
+        # Otherwise, sort the list and average the most recent
+        else:
+            pass
+            # newlist = sorted(data["tdee"], key=itemgetter("date"), reverse=True) # This isn't working right now.
+            # c.print(newlist)
+            # iterate through list, compare stored date against today plus timeframe. If greater, add, otherwise quit and move ahead
+
+            # number_records = "new number"
 
         average_weight = round((average_weight/number_records), 1)
         average_calories = round(average_calories/number_records)
@@ -232,7 +254,8 @@ def save_calculations(tdee_data_file, data) -> None:
     """"
     Saves the results of calculate() to file.
     """
-    tdee_data_file.write_text(json.dumps(data))
+    # tdee_data_file.write_text(json.dumps(data)) # Uncomment to actually save calculations
+    return
 
 
 def display_data(tdee_data_file, data):
